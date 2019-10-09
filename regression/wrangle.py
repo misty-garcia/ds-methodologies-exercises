@@ -1,7 +1,7 @@
 import pandas as pd
 import matplotlib as plt
 import numpy as np  
-import env
+import util
 
 # Throughout the exercises for Regression in Python lessons, you will use the following example scenario: As a customer analyst, I want to know who has spent the most money with us over their lifetime. I have monthly charges and tenure, so I think I will be able to use those two attributes as features to estimate total_charges. I need to do this within an average of $5.00 per customer.
 
@@ -9,7 +9,7 @@ import env
 
 # Acquire customer_id, monthly_charges, tenure, and total_charges from telco_churn database for all customers with a 2 year contract.
 
-url = env.get_url("telco_churn")
+url = util.get_url("telco_churn")
 pd.read_sql("SHOW TABLES", url)
 
 query = """ 
@@ -28,14 +28,15 @@ df1.shape
 df1.sort_values(by="total_charges")
 
 df1.replace(r'^\s*$', np.nan, regex=True, inplace=True)
-df1.total_charges = df1.total_charges.astype("float")
-df1 = df1.dropna()
+df1.isnull().sum()
 
+df1.replace(np.nan, 0, inplace=True)
+df1.total_charges = df1.total_charges.astype("float")
+
+df1 = df1.dropna()
 
 # End with a python file wrangle.py that contains the function, wrangle_telco(), that will acquire the data and return a dataframe cleaned with no missing values.
 
 def wrangle_telco(df):
     df.replace(r'^\s*$', np.nan, regex=True, inplace=True)
-    df = df.dropna()
-    df.total_charges = df.total_charges.astype("float")
     return df

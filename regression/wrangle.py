@@ -13,7 +13,7 @@ url = util.get_url("telco_churn")
 pd.read_sql("SHOW TABLES", url)
 
 query = """ 
-    SELECT customer_id, monthly_charges, tenure, total_charges, contract_type
+    SELECT customer_id, monthly_charges, tenure, total_charges
     FROM customers
     JOIN contract_types USING (contract_type_id)
     WHERE contract_type = "Two Year"
@@ -25,18 +25,32 @@ df1.head()
 df1.info()
 df1.shape
 
-df1.sort_values(by="total_charges")
+df1.total_charges.sort_values()
 
-df1.replace(r'^\s*$', np.nan, regex=True, inplace=True)
+df1.total_charges = df1.total_charges.str.strip().replace("", np.nan).astype(float)
+
 df1.isnull().sum()
-
-df1.replace(np.nan, 0, inplace=True)
-df1.total_charges = df1.total_charges.astype("float")
+df1.isna().sum()
 
 df1 = df1.dropna()
 
 # End with a python file wrangle.py that contains the function, wrangle_telco(), that will acquire the data and return a dataframe cleaned with no missing values.
 
-def wrangle_telco(df):
-    df.replace(r'^\s*$', np.nan, regex=True, inplace=True)
+def get_data_from_mysql():
+    url = util.get_url("telco_churn")
+    query = """ 
+        SELECT customer_id, monthly_charges, tenure, total_charges
+        FROM customers
+        JOIN contract_types USING (contract_type_id)
+        WHERE contract_type = "Two Year"
+        """
+    df = pd.read_sql(query, url)
     return df
+
+def clean_data(df):
+    df.total_charges = df.total_charges.str.strip().replace("", np.nan).astype(float)
+    df = df.dropna()
+    return df
+
+def wrangle_telco():
+    return clean_data(get_data_from_mysql())

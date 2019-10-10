@@ -32,31 +32,30 @@ def transform_scaler(train, test, scaler):
     test_scaled = pd.DataFrame(scaler.transform(test), columns=test.columns.values).set_index([test.index.values])
     return train_scaled, test_scaled
 
+def inverse_transform_scaler(train_scaled, test_scaled, scaler):  
+    train_unscaled = pd.DataFrame(scaler.inverse_transform(train_scaled), columns=train_scaled.columns.values).set_index([train_scaled.index.values])
+    test_unscaled = pd.DataFrame(scaler.inverse_transform(test_scaled), columns=test_scaled.columns.values).set_index([test_scaled.index.values])
+    return train_unscaled, test_unscaled
+
 # standard_scaler()
 def standard_scaler():
     X_train, X_test, y_train, y_test = split_my_data()
 
-    scaler = StandardScaler(copy=True, with_mean=True, with_std=True).fit(X_train)
-    X_train_scaled, X_test_scaled = transform_scaler(X_train, X_test, scaler)
+    X_scaler = StandardScaler(copy=True, with_mean=True, with_std=True).fit(X_train)
+    X_train_scaled, X_test_scaled = transform_scaler(X_train, X_test, X_scaler)
 
-    scaler = StandardScaler(copy=True, with_mean=True, with_std=True).fit(y_train)
-    y_train_scaled, y_test_scaled = transform_scaler(y_train, y_test, scaler)
+    y_scaler = StandardScaler(copy=True, with_mean=True, with_std=True).fit(y_train)
+    y_train_scaled, y_test_scaled = transform_scaler(y_train, y_test, y_scaler)
 
-    return X_train_scaled, X_test_scaled, y_train_scaled, y_test_scaled
+    return X_train_scaled, X_test_scaled, y_train_scaled, y_test_scaled, X_scaler, y_scaler
 
 # scale_inverse()
-def scale_inverse():
-    train_scaled, test_scaled, scaler = standard_scaler()
+def scale_inverse(X_train_scaled, X_test_scaled, y_train_scaled, y_test_scaled, X_scaler, y_scaler):
+    X_train_unscaled, X_test_unscaled = inverse_transform_scaler(X_train_scaled, X_test_scaled, X_scaler)
 
-    train_unscaled = pd.DataFrame(scaler.inverse_transform(train_scaled), columns=train_scaled.columns.values).set_index([train_scaled.index.values])
-    test_unscaled = pd.DataFrame(scaler.inverse_transform(test_scaled), columns=test_scaled.columns.values).set_index([test_scaled.index.values])
+    y_train_unscaled, y_test_unscaled = inverse_transform_scaler(y_train_scaled, y_test_scaled, y_scaler)
 
-
-    train_unscaled = pd.DataFrame(scaler.inverse_transform(train_scaled), columns=train_scaled.columns.values).set_index([train.index.values])
-
-    test_unscaled = pd.DataFrame(scaler.inverse_transform(test_scaled), columns=test_scaled.columns.values).set_index([test.index.values])
-
-    return train_unscaled, test_unscaled
+    return X_train_unscaled, X_test_unscaled, y_train_unscaled, y_test_unscaled
 
 # uniform_scaler()
 def uniform_scaler():

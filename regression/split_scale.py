@@ -44,8 +44,6 @@ def standard_scaler():
 
     return X_train_scaled, X_test_scaled, y_train_scaled, y_test_scaled
 
-standard_scaler()
-
 # scale_inverse()
 def scale_inverse():
     train_scaled, test_scaled, scaler = standard_scaler()
@@ -62,45 +60,51 @@ def scale_inverse():
 
 # uniform_scaler()
 def uniform_scaler():
-    train, test, y_train, y_test = split_my_data()
+    X_train, X_test, y_train, y_test = split_my_data()
 
-    scaler = QuantileTransformer(n_quantiles=100, output_distribution='uniform', random_state=123, copy=True).fit(train)
+    scaler = QuantileTransformer(n_quantiles=100, output_distribution='uniform', random_state=123, copy=True).fit(X_train)
+    X_train_scaled, X_test_scaled = transform_scaler(X_train, X_test, scaler)
 
-    train_scaled = pd.DataFrame(scaler.transform(train), columns=train.columns.values).set_index([train.index.values])
-    test_scaled = pd.DataFrame(scaler.transform(test), columns=test.columns.values).set_index([test.index.values])
+    scaler = QuantileTransformer(n_quantiles=100, output_distribution='uniform', random_state=123, copy=True).fit(y_train)
+    y_train_scaled, y_test_scaled = transform_scaler(y_train, y_test, scaler)
 
-    return train_scaled, test_scaled
+    return X_train_scaled, X_test_scaled, y_train_scaled, y_test_scaled
 
 # gaussian_scaler()
 def gaussian_scaler():
-    train, test, y_train, y_test = split_my_data()
+    X_train, X_test, y_train, y_test = split_my_data()
 
-    scaler = PowerTransformer(method='yeo-johnson', standardize=False, copy=True).fit(train)
-    
-    train_scaled = pd.DataFrame(scaler.transform(train), columns=train.columns.values).set_index([train.index.values])
-    test_scaled = pd.DataFrame(scaler.transform(test), columns=test.columns.values).set_index([test.index.values])
+    scaler = PowerTransformer(method='yeo-johnson', standardize=False, copy=True).fit(X_train)
+    X_train_scaled, X_test_scaled = transform_scaler(X_train, X_test, scaler)
 
-    return train_scaled, test_scaled
+    scaler = PowerTransformer(method='yeo-johnson', standardize=False, copy=True).fit(y_train)
+    y_train_scaled, y_test_scaled = transform_scaler(y_train, y_test, scaler)
+
+    return X_train_scaled, X_test_scaled, y_train_scaled, y_test_scaled
 
 # min_max_scaler()
 def min_max_scaler():
-    train, test, y_train, y_test = split_my_data()
-    
-    scaler = MinMaxScaler(copy=True, feature_range=(0,1)).fit(train)
+    X_train, X_test, y_train, y_test = split_my_data()
 
-    train_scaled = pd.DataFrame(scaler.transform(train), columns=train.columns.values).set_index([train.index.values])
-    test_scaled = pd.DataFrame(scaler.transform(test), columns=test.columns.values).set_index([test.index.values])
+    scaler = MinMaxScaler(copy=True, feature_range=(0,1)).fit(X_train)
+    X_train_scaled, X_test_scaled = transform_scaler(X_train, X_test, scaler)
 
-    return train_scaled, test_scaled
+    scaler = MinMaxScaler(copy=True, feature_range=(0,1)).fit(y_train)
+    y_train_scaled, y_test_scaled = transform_scaler(y_train, y_test, scaler)
+
+    return X_train_scaled, X_test_scaled, y_train_scaled, y_test_scaled
+
 
 # iqr_robust_scaler()
 def iqr_robust_scaler():
-    train, test, y_train, y_test = split_my_data()
+    X_train, X_test, y_train, y_test = split_my_data()
 
-    scaler = RobustScaler(quantile_range=(25.0,75.0), copy=True, with_centering=True, with_scaling=True).fit(train)
+    scaler = RobustScaler(quantile_range=(25.0,75.0), copy=True, with_centering=True, with_scaling=True).fit(X_train)
+    X_train_scaled, X_test_scaled = transform_scaler(X_train, X_test, scaler)
 
-    train_scaled = pd.DataFrame(scaler.transform(train), columns=train.columns.values).set_index([train.index.values])   
-    test_scaled = pd.DataFrame(scaler.transform(test), columns=test.columns.values).set_index([test.index.values])
+    scaler = RobustScaler(quantile_range=(25.0,75.0), copy=True, with_centering=True, with_scaling=True).fit(y_train)
+    y_train_scaled, y_test_scaled = transform_scaler(y_train, y_test, scaler)
 
-    return train_scaled, test_scaled
+    return X_train_scaled, X_test_scaled, y_train_scaled, y_test_scaled
+
 

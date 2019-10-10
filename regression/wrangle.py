@@ -9,33 +9,9 @@ import util
 
 # Acquire customer_id, monthly_charges, tenure, and total_charges from telco_churn database for all customers with a 2 year contract.
 
-url = util.get_url("telco_churn")
-pd.read_sql("SHOW TABLES", url)
-
-query = """ 
-    SELECT customer_id, monthly_charges, tenure, total_charges
-    FROM customers
-    JOIN contract_types USING (contract_type_id)
-    WHERE contract_type = "Two Year"
-    """
-df1 = pd.read_sql(query, url)
-df1.head()
-
-# Walk through the steps above using your new dataframe. You may handle the missing values however you feel is appropriate.
-df1.info()
-df1.shape
-
-df1.total_charges.sort_values()
-
-df1.total_charges = df1.total_charges.str.strip().replace("", np.nan).astype(float)
-
-df1.isnull().sum()
-df1.isna().sum()
-
-df1 = df1.dropna()
+# # Walk through the steps above using your new dataframe. You may handle the missing values however you feel is appropriate.
 
 # End with a python file wrangle.py that contains the function, wrangle_telco(), that will acquire the data and return a dataframe cleaned with no missing values.
-
 def get_data_from_mysql():
     url = util.get_url("telco_churn")
     query = """ 

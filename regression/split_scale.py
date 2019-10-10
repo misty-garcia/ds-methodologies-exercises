@@ -61,49 +61,49 @@ def scale_inverse(X_train_scaled, X_test_scaled, y_train_scaled, y_test_scaled, 
 def uniform_scaler():
     X_train, X_test, y_train, y_test = split_my_data()
 
-    scaler = QuantileTransformer(n_quantiles=100, output_distribution='uniform', random_state=123, copy=True).fit(X_train)
+    X_scaler = QuantileTransformer(n_quantiles=100, output_distribution='uniform', random_state=123, copy=True).fit(X_train)
     X_train_scaled, X_test_scaled = transform_scaler(X_train, X_test, scaler)
 
-    scaler = QuantileTransformer(n_quantiles=100, output_distribution='uniform', random_state=123, copy=True).fit(y_train)
+    y_scaler = QuantileTransformer(n_quantiles=100, output_distribution='uniform', random_state=123, copy=True).fit(y_train)
     y_train_scaled, y_test_scaled = transform_scaler(y_train, y_test, scaler)
 
-    return X_train_scaled, X_test_scaled, y_train_scaled, y_test_scaled
+    return X_train_scaled, X_test_scaled, y_train_scaled, y_test_scaled, X_scaler, y_scaler
 
 # gaussian_scaler()
 def gaussian_scaler():
     X_train, X_test, y_train, y_test = split_my_data()
 
-    scaler = PowerTransformer(method='yeo-johnson', standardize=False, copy=True).fit(X_train)
+    X_scaler = PowerTransformer(method='yeo-johnson', standardize=False, copy=True).fit(X_train)
     X_train_scaled, X_test_scaled = transform_scaler(X_train, X_test, scaler)
 
-    scaler = PowerTransformer(method='yeo-johnson', standardize=False, copy=True).fit(y_train)
+    y_scaler = PowerTransformer(method='yeo-johnson', standardize=False, copy=True).fit(y_train)
     y_train_scaled, y_test_scaled = transform_scaler(y_train, y_test, scaler)
 
-    return X_train_scaled, X_test_scaled, y_train_scaled, y_test_scaled
+    return X_train_scaled, X_test_scaled, y_train_scaled, y_test_scaled, X_scaler, y_scaler
 
 # min_max_scaler()
 def min_max_scaler():
     X_train, X_test, y_train, y_test = split_my_data()
 
-    scaler = MinMaxScaler(copy=True, feature_range=(0,1)).fit(X_train)
+    X_scaler = MinMaxScaler(copy=True, feature_range=(0,1)).fit(X_train)
     X_train_scaled, X_test_scaled = transform_scaler(X_train, X_test, scaler)
 
-    scaler = MinMaxScaler(copy=True, feature_range=(0,1)).fit(y_train)
+    y_scaler = MinMaxScaler(copy=True, feature_range=(0,1)).fit(y_train)
     y_train_scaled, y_test_scaled = transform_scaler(y_train, y_test, scaler)
 
-    return X_train_scaled, X_test_scaled, y_train_scaled, y_test_scaled
+    return X_train_scaled, X_test_scaled, y_train_scaled, y_test_scaled, X_scaler, y_scaler
 
 
 # iqr_robust_scaler()
 def iqr_robust_scaler():
     X_train, X_test, y_train, y_test = split_my_data()
 
-    scaler = RobustScaler(quantile_range=(25.0,75.0), copy=True, with_centering=True, with_scaling=True).fit(X_train)
+    X_scaler = RobustScaler(quantile_range=(25.0,75.0), copy=True, with_centering=True, with_scaling=True).fit(X_train)
     X_train_scaled, X_test_scaled = transform_scaler(X_train, X_test, scaler)
 
-    scaler = RobustScaler(quantile_range=(25.0,75.0), copy=True, with_centering=True, with_scaling=True).fit(y_train)
+    y_scaler = RobustScaler(quantile_range=(25.0,75.0), copy=True, with_centering=True, with_scaling=True).fit(y_train)
     y_train_scaled, y_test_scaled = transform_scaler(y_train, y_test, scaler)
 
-    return X_train_scaled, X_test_scaled, y_train_scaled, y_test_scaled
+    return X_train_scaled, X_test_scaled, y_train_scaled, y_test_scaled, X_scaler, y_scaler
 
 

@@ -27,8 +27,10 @@ def months_to_years(tenure_months, df):
 
 # Write a function, plot_categorical_and_continous_vars(categorical_var, continuous_var, df), that outputs 3 different plots for plotting a categorical variable with a continuous variable, e.g. tenure_years with total_charges. For ideas on effective ways to visualize categorical with continuous: https://datavizcatalogue.com/. You can then look into seaborn and matplotlib documentation for ways to create plots.
 def plot_categorical_and_continous_vars(categorical_var, continuous_var, df):
-    sns.pairplot(train)
-    sns.barplot(x="tenure",y="total_charges", data=train) 
-    sns.heatmap(train.corr(), annot=True)
-    return
+    plot1 = sns.pairplot(df)
+    plot2 = sns.barplot(x=categorical_var,y=continuous_var, data=df) 
+    return plot1, plot2
 
+plot_categorical_and_continous_vars(train.tenure_years, train.monthly_charges, train)
+
+train.head()

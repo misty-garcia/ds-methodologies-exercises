@@ -40,14 +40,27 @@ regression_errors(y,tips.yhat,tips)
 def baseline_mean_errors(y):
     df_baseline = pd.DataFrame(y)
     df_baseline['yhat'] = y.mean()
-    df_baseline['residual'] = df_baseline.yhat - df_baseline.iloc[:,0]
-    df_baseline['residual^2'] = df_baseline.residual ** 2
-    SSE = sum(df_baseline['residual^2'])
-    MSE = SSE/len(df_baseline)
+    MSE = mean_squared_error(df_baseline.iloc[:,0], df_baseline.yhat)
+    SSE = MSE*len(df_baseline)
     RMSE = sqrt(MSE)
     return SSE, MSE, RMSE
 
+baseline_mean_errors(tips.tip)
+
 # Write a function, better_than_baseline(SSE), that returns true if your model performs better than the baseline, otherwise false.
+def better_than_baseline(SSE, SSE_base):
+    return SSE < SSE_base
+
+SSE, ESS, TSS, MSE, RMSE = regression_errors(y,tips.yhat,tips)
+SSE_base, MSE_base, RMSE_base = baseline_mean_errors(tips.tip)
+better_than_baseline(SSE, SSE_base)
+
+
+df_eval = pd.DataFrame(np.array(['SSE','MSE','RMSE']), columns=['metric'])
+df_eval['model_error'] = np.array([SSE, MSE, RMSE])df_eval
+df_eval['baseline_error'] = np.array([SSE_base, MSE_base, RMSE_base])
+df_eval['error_delta'] = df_eval.model_error - df_eval.baseline_error
+df_eval
 
 
 # Write a function, model_significance(ols_model), that takes the ols model as input and returns the amount of variance explained in your model, and the value telling you whether the correlation between the model and the tip value are statistically significant.

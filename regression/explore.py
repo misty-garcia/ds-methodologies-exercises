@@ -30,7 +30,3 @@ def plot_categorical_and_continous_vars(categorical_var, continuous_var, df):
     plot1 = sns.pairplot(df)
     plot2 = sns.barplot(x=categorical_var,y=continuous_var, data=df) 
     return plot1, plot2
-
-plot_categorical_and_continous_vars(train.tenure_years, train.monthly_charges, train)
-
-train.head()

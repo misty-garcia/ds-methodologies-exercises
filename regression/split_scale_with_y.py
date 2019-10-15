@@ -17,11 +17,9 @@ def prepare_for_split():
     df = wrangle.wrangle_telco()
     X = df[["monthly_charges", "tenure"]]
     y = df.total_charges
-    train_pct = .80
-    return X, y, train_pct
+    return X, y
 
-def split_my_data():
-    X, y, train_pct = prepare_for_split()
+def split_my_data(X, y, train_pct):
     X_train, X_test, y_train, y_test = train_test_split(X, y, train_size=train_pct, random_state=123)
     y_train = pd.DataFrame(y_train)
     y_test = pd.DataFrame(y_test)   

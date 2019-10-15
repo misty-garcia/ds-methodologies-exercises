@@ -1,5 +1,9 @@
 # Load the tips dataset from either pydataset or seaborn.
+import pandas as pd
+import seaborn as sns
+from math import sqrt
 from pydataset import data
+from sklearn.metrics import mean_squared_error, r2_score, explained_variance_score
 
 tips = data("tips")
 
@@ -24,8 +28,6 @@ def plot_residuals(x, y, dataframe):
     return
 
 # Write a function, regression_errors(y, yhat), that takes in y and yhat, returns the sum of squared errors (SSE), explained sum of squares (ESS), total sum of squares (TSS), mean squared error (MSE) and root mean squared error (RMSE).
-from sklearn.metrics import mean_squared_error
-
 def regression_errors(y, yhat, df):
     SSE = mean_squared_error(y, yhat)*len(df)
     ESS = sum((yhat - y.mean())**2)
@@ -51,16 +53,15 @@ baseline_mean_errors(tips.tip)
 def better_than_baseline(SSE, SSE_base):
     return SSE < SSE_base
 
-SSE, ESS, TSS, MSE, RMSE = regression_errors(y,tips.yhat,tips)
-SSE_base, MSE_base, RMSE_base = baseline_mean_errors(tips.tip)
-better_than_baseline(SSE, SSE_base)
-
-
-df_eval = pd.DataFrame(np.array(['SSE','MSE','RMSE']), columns=['metric'])
-df_eval['model_error'] = np.array([SSE, MSE, RMSE])df_eval
-df_eval['baseline_error'] = np.array([SSE_base, MSE_base, RMSE_base])
-df_eval['error_delta'] = df_eval.model_error - df_eval.baseline_error
-df_eval
-
+regression = regression_errors(y,tips.yhat,tips)
+baseline = baseline_mean_errors(tips.tip)
+better_than_baseline(regression[0], baseline[0])
 
 # Write a function, model_significance(ols_model), that takes the ols model as input and returns the amount of variance explained in your model, and the value telling you whether the correlation between the model and the tip value are statistically significant.
+
+def model_significance(ols_model):
+    r2 = ols_model.rsquared
+    f_pval = ols_model.f_pvalue
+    return r2, f_pval
+
+model_significance(regr)

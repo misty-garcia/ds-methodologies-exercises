@@ -5,11 +5,15 @@ import split_scale
 
 import pandas as pd 
 import numpy as np 
+import seaborn as sns
 import matplotlib.pyplot as plt
 
 import statsmodels.api as sm
 from sklearn.feature_selection import SelectKBest, f_regression, RFE
 from sklearn.linear_model import LassoCV, LinearRegression
+
+import warnings
+warnings.filterwarnings("ignore")
 
 df = wrangle.wrangle_telco()
 df.drop(columns = "customer_id", inplace=True)
@@ -21,6 +25,8 @@ train, test = split_scale.split_my_data(df, .80)
 
 X_train = train.drop(columns = "total_charges")
 y_train = train["total_charges"]
+X_test = test.drop(columns = "total_charges")
+y_test = test["total_charges"]
 
 def select_kbest_freg_unscaled(X_train, y_train, k):
     f_selector = SelectKBest(f_regression, k=k).fit(X_train, y_train)
@@ -32,11 +38,6 @@ select_kbest_freg_unscaled(X_train, y_train, 1)
 
 # Write a function, select_kbest_freg_scaled() that takes X_train, y_train (scaled) and k as input and returns a list of the top k features.
 
-X_train = train.drop(columns = "total_charges")
-y_train = train["total_charges"]
-X_test = test.drop(columns = "total_charges")
-y_test = test["total_charges"]
-
 X_train_scaled, X_test_scaled, scaler = split_scale.standard_scaler(X_train, X_test)
 
 def select_kbest_freg_scaled(X_train, y_train, k):
@@ -45,7 +46,7 @@ def select_kbest_freg_scaled(X_train, y_train, k):
     f_feature = X_train.loc[:,f_support].columns.tolist()
     return f_feature
 
-select_kbest_freg_scaled(X_train_scaled, y_train, 1)
+select_kbest_freg_scaled(X_train_scaled, y_train, 2)
 
 # Write a function, ols_backware_elimination() that takes X_train and y_train (scaled) as input and returns selected features based on the ols backwards elimination method.
 def ols_backware_elimination(X_train, y_train):
@@ -53,13 +54,10 @@ def ols_backware_elimination(X_train, y_train):
     fit = ols_model.fit()
 
     cols = list(X_train.columns)
-    pmax = 1
     while (len(cols)>0):
-        p= []
         X_1 = X_train[cols]
-        X_1 = sm.add_constant(X_1)
         model = sm.OLS(y_train,X_1).fit()
-        p = pd.Series(model.pvalues.values[1:],index = cols)
+        p = model.pvalues
         pmax = max(p)
         feature_with_p_max = p.idxmax()
         if(pmax>0.05):
@@ -78,7 +76,9 @@ def lasso_cv_coef(X_train, y_train):
     coef = pd.Series(reg.coef_, index = X_train.columns)
     imp_coef = coef.sort_values()
 
-    plot = imp_coef.plot(kind = "barh")
+    # plot = imp_coef.plot(kind = "barh")
+    plot = sns.barplot(x=X_train.columns, y=reg.coef_)
+
     return coef, plot
 
 lasso_cv_coef(X_train_scaled, y_train)
@@ -90,7 +90,7 @@ def num_optimal_features(X_train, y_train, X_test, y_test):
     X_rfe = rfe.fit_transform(X_train,y_train)  
     model.fit(X_rfe,y_train)
 
-    number_of_features_list=np.arange(1,3)
+    number_of_features_list=range(1,len(X_train.columns)+1)
     high_score=0
     number_of_features=0           
     score_list =[]

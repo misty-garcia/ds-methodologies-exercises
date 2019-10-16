@@ -39,7 +39,6 @@ y_test = test["total_charges"]
 
 X_train_scaled, X_test_scaled, scaler = split_scale.standard_scaler(X_train, X_test)
 
-
 def select_kbest_freg_scaled(X_train, y_train, k):
     f_selector = SelectKBest(f_regression, k=k).fit(X_train, y_train)
     f_support = f_selector.get_support()
@@ -122,7 +121,7 @@ def optimal_features(n):
 
     return selected_features_rfe
 
-def n_to_X_train_and_test(features):
+def features_to_X_train_and_test(features):
     new_X_train = X_train_scaled[features]
     new_X_test = X_test_scaled[features]
     return new_X_train, new_X_test
@@ -135,6 +134,6 @@ n = num_optimal_features(X_train_scaled, y_train, X_test_scaled,y_test)
 
 selected_features = optimal_features(n)
 
-n_to_X_train_and_test(selected_features)
+features_to_X_train_and_test(selected_features)
 
 recursive_feature_elimination(X_train_scaled, y_train, X_test_scaled, y_test)

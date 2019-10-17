@@ -27,16 +27,12 @@ def transform_scaler(train, test, scaler):
     test_scaled = pd.DataFrame(scaler.transform(test), columns=test.columns.values).set_index([test.index.values])
     return train_scaled, test_scaled
 
-
 # standard_scaler()
 def standard_scaler(train, test):
     scaler = StandardScaler(copy=True, with_mean=True, with_std=True).fit(train)
     train_scaled, test_scaled = transform_scaler(train, test, scaler)
 
     return train_scaled, test_scaled, scaler
-
-train, test, scaler = standard_scaler(train, test)
-scale_inverse(train, test, scaler)
 
 # scale_inverse()
 def scale_inverse(train_scaled, test_scaled, scaler):

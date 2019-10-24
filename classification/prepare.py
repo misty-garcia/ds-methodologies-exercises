@@ -10,7 +10,7 @@ def prep_iris(df):
     
     encoder.fit(df.species)
     df.species = encoder.transform(df.species)
-    return df
+    return df, encoder
 
 def prep_titanic(df):
     df.fillna(np.nan,inplace=True)

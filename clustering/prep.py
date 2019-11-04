@@ -49,3 +49,7 @@ def handle_missing_values(df, prop_required_column, prop_required_row):
     threshold = int(round(prop_required_row*len(df.columns),0))
     df.dropna(axis=0, thresh=threshold, inplace=True)
     return df
+
+def fill_missing_values(df, fill_value):
+    df.fillna(fill_value)
+    return df

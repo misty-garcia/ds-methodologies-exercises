@@ -17,3 +17,9 @@ def df_value_counts(df):
                 col_count = df[col].value_counts()
         print(col_count)
 
+def df_feature_dist(df):
+    features_num = list(df.select_dtypes(np.number).columns)
+    for feature in features_num:
+        sns.distplot(df[feature].dropna())
+        plt.show()
+

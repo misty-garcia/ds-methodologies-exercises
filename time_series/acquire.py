@@ -6,6 +6,12 @@ def get_items():
     base_url = "http://python.zach.lol"
     response = requests.get(base_url + "/api/v1/items")
     items = pd.DataFrame(response.json()["payload"]["items"])
+
+    response = requests.get(base_url + "/api/v1/items?page=2")
+    items = pd.concat([items,pd.DataFrame(response.json()["payload"]["items"])], ignore_index=True)
+    
+    response = requests.get(base_url + "/api/v1/items?page=3")
+    items = pd.concat([items,pd.DataFrame(response.json()["payload"]["items"])], ignore_index=True)
     return items
 
 # Do the same thing, but for stores.

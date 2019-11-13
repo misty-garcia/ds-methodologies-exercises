@@ -2,61 +2,50 @@ import pandas as pd
 import requests
 
 # Using the code from the lesson as a guide, create a dataframe named items that has all of the data for items.
-base_url = "http://python.zach.lol"
-response = requests.get(base_url)
-response.json()
-
-response = requests.get(base_url + "/documentation")
-response.json().keys()
-print(response.json()["status"])
-print(response.json()["payload"])
-
-response = requests.get(base_url + "/api/v1/items")
-response.json().keys()
-response.json()["payload"].keys()
-response.json()["payload"]["items"]
-
-items = pd.DataFrame(response.json()["payload"]["items"])
-items
+def get_items():
+    base_url = "http://python.zach.lol"
+    response = requests.get(base_url + "/api/v1/items")
+    items = pd.DataFrame(response.json()["payload"]["items"])
+    return items
 
 # Do the same thing, but for stores.
-response = requests.get(base_url + "/api/v1/stores")
-response.json()
-response.json().keys()
-response.json()["payload"].keys()
-response.json()["payload"]["stores"]
-
-stores = pd.DataFrame(response.json()["payload"]["stores"])
-stores
+def get_stores():
+    base_url = "http://python.zach.lol"
+    response = requests.get(base_url + "/api/v1/stores")
+    stores = pd.DataFrame(response.json()["payload"]["stores"])
+    return stores
 
 # Extract the data for sales. There are a lot of pages of data here, so your code will need to be a little more complex. Your code should continue fetching data from the next page until all of the data is extracted.
-response = requests.get(base_url + "/api/v1/sales")
-data = response.json()
-data.keys()
-data["payload"].keys()
-data["payload"]["max_page"]
-data["payload"]["next_page"]
-data["payload"]["page"]
-data["payload"][1]
+def get_sales():
+    base_url = "http://python.zach.lol"
+    response = requests.get(base_url + "/api/v1/sales")
 
-response = requests.get(base_url + "/api/v1/sales?page=183")
-data = response.json()
-data.keys()
+    maxpage = response.json()["payload"]["max_page"] + 1
+    sales = pd.DataFrame()
 
-maxpage = data["payload"]["max_page"] + 1
-
-sales = pd.DataFrame()
-for page in range(1,maxpage):
-    response = requests.get(base_url + "/api/v1/sales?page={}".format(page))
-    sale_page = pd.DataFrame(response.json()["payload"]["sales"])
-    sales = pd.concat([sales,sale_page])
-
-sales
+    for page in range(1,maxpage):
+        response = requests.get(base_url + "/api/v1/sales?page={}".format(page))
+        sale_page = pd.DataFrame(response.json()["payload"]["sales"])
+        sales = pd.concat([sales,sale_page])
+    return sales
 
 # Save the data in your files to local csv files so that it will be faster to access in the future.
-sales.to_csv('/Users/mists/codeup-data-science/ds-methodologies-exercises/time_series/sales.csv')
+def df_to_csv(df):
+    return df.to_csv('/Users/mists/codeup-data-science/ds-methodologies-exercises/time_series/sales.csv')
+
+def get_sales_csv():
+    sales = pd.read_csv("sales.csv")
+    sales.drop(columns="Unnamed: 0", inplace=True)
+    return sales
 
 # Combine the data from your three separate dataframes into one large dataframe.
-items.head()
-stores.head()
-sales.head()
+def combine_dfs(sales, stores, items):
+    df = sales.merge(stores, left_on="store", right_on="store_id")
+    df = df.merge(items, left_on="item", right_on="item_id", how="left")
+    return df
+
+# Acquire the Open Power Systems Data for Germany, which has been rapidly expanding its renewable energy production in recent years. The data set includes country-wide totals of electricity consumption, wind power production, and solar power production for 2006-2017. You can get the data here: https://raw.githubusercontent.com/jenfly/opsd/master/opsd_germany_daily.cs
+def get_OPS():
+    return pd.read_csv('https://raw.githubusercontent.com/jenfly/opsd/master/opsd_germany_daily.csv')
+
+# Make sure all the work that you have done above is reproducible. That is, you should put the code above into separate functions in the acquire.py file and be able to re-run the functions and get the same data.

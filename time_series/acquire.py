@@ -45,7 +45,10 @@ def get_sales_csv():
     return sales
 
 # Combine the data from your three separate dataframes into one large dataframe.
-def combine_dfs(sales, stores, items):
+def combine_dfs():
+    stores = get_stores()
+    items = get_items()
+    sales = get_sales_csv()
     df = sales.merge(stores, left_on="store", right_on="store_id")
     df = df.merge(items, left_on="item", right_on="item_id", how="left")
     return df

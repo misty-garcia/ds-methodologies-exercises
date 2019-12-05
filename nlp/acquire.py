@@ -7,7 +7,7 @@ import os
 
 
 def make_dictionary_from_article(url):
-    headers = {'User-Agent': 'Codeup Ada Data Science'}
+    headers = {'User-Agent': 'Codeup Data Science'}
     response = get(url,headers=headers)
     soup = BeautifulSoup(response.text)
     title = soup.find("h1")
@@ -17,7 +17,6 @@ def make_dictionary_from_article(url):
         "title": title.get_text(),
         "body": body.get_text()
     }
-
 
 def get_blog_articles():
     # if we already have the data, read it locally
@@ -37,9 +36,38 @@ def get_blog_articles():
     
     for url in urls:
         articles.append(make_dictionary_from_article(url))
- 
+
     # save it for next time
 #     with open('articles.txt', 'w') as f:
 #         f.write(articles.txt)
 
     return articles
+
+
+
+def get_specific_articles(catergory):
+    headers = {'User-Agent': 'Codeup Data Science'}
+    specific_url = url + "/en/read/"+ catergory
+    response = get(specific_url, headers=headers)
+    soup = BeautifulSoup(response.text)
+    title = soup.find_all("span", itemprop ="headline")
+    body = soup.find_all("div", itemprop="articleBody")
+
+    news = []
+    for x in range(len(title)):
+         news.append(
+             {
+            "title": title[x].text,
+            "body": body[x].text,
+            "catergory": catergory
+             }
+         )
+    return news
+
+def get_news_articles():
+    cats = ["business", "sports", "technology", "entertainment"]
+    all_news = []
+    
+    for cat in cats:
+        all_news.extend(get_specific_articles(cat))
+    return all_news

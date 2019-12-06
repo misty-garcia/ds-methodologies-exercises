@@ -9,7 +9,7 @@ import os
 def make_dictionary_from_article(url):
     headers = {'User-Agent': 'Codeup Data Science'}
     response = get(url,headers=headers)
-    soup = BeautifulSoup(response.text)
+    soup = BeautifulSoup(response.text, features="lxml")
     title = soup.find("h1")
     body = soup.find("div", class_="mk-single-content")   
     
@@ -47,9 +47,10 @@ def get_blog_articles():
 
 def get_specific_articles(catergory):
     headers = {'User-Agent': 'Codeup Data Science'}
+    url = "https://inshorts.com"
     specific_url = url + "/en/read/"+ catergory
     response = get(specific_url, headers=headers)
-    soup = BeautifulSoup(response.text)
+    soup = BeautifulSoup(response.text, features="lxml")
     title = soup.find_all("span", itemprop ="headline")
     body = soup.find_all("div", itemprop="articleBody")
 

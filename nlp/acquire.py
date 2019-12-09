@@ -45,10 +45,10 @@ def get_blog_articles():
 
 
 
-def get_specific_articles(catergory):
+def get_specific_articles(category):
     headers = {'User-Agent': 'Codeup Data Science'}
     url = "https://inshorts.com"
-    specific_url = url + "/en/read/"+ catergory
+    specific_url = url + "/en/read/"+ category
     response = get(specific_url, headers=headers)
     soup = BeautifulSoup(response.text, features="lxml")
     title = soup.find_all("span", itemprop ="headline")
@@ -60,7 +60,7 @@ def get_specific_articles(catergory):
              {
             "title": title[x].text,
             "body": body[x].text,
-            "catergory": catergory
+            "category": category
              }
          )
     return news

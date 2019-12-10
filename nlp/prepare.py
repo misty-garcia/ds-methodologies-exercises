@@ -14,14 +14,13 @@ import acquire
 def basic_clean(string):
     string = string.lower()
     string = unicodedata.normalize('NFKD', string).encode('ascii', 'ignore').decode('utf-8', 'ignore')
-    string = re.sub(r"[^a-z0-9'\s]", '', string)
+    string = re.sub(r"[^a-z0-9\s]", '', string)
     string = re.sub(r'[\r|\n|\r\n]+',' ', string)
     string = string.strip()
     return string
 
 def tokenize(string):
     tokenizer = nltk.tokenize.ToktokTokenizer()
-
     return tokenizer.tokenize(string, return_str=True)
 
 def stem(string):
@@ -38,12 +37,10 @@ def lemmatize(string):
 
 def remove_stopwords(string, extra_words=[], exclude_words=[]):
     string = tokenize(string)
-    
     words = string.split()
+
     stopword_list = stopwords.words('english')
-    
     stopword_list = set(stopword_list) - set(exclude_words)
-    
     stopword_list = stopword_list.union(set(extra_words))
     
     filtered_words = [w for w in words if w not in stopword_list]
